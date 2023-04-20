@@ -229,12 +229,10 @@ mod tests {
         assert_eq!(
             space
                 .distance(coord.clone(), coord1.clone())
-                .unwrap_or_else(|_| {
-                    panic!(
-                        "Should exists an distace between {:?} and {:?}",
-                        coord, coord1
-                    )
-                }),
+                .unwrap_or_else(|_| panic!(
+                    "Should exists an distace between {:?} and {:?}",
+                    coord, coord1
+                )),
             10.0
         );
     }
@@ -274,12 +272,44 @@ mod tests {
         assert_eq!(
             space
                 .distance(coord.clone(), coord2.clone())
-                .unwrap_or_else(|_| {
-                    panic!(
-                        "Should exists an distace between {:?} and {:?}",
-                        coord, coord1
-                    )
-                }),
+                .unwrap_or_else(|_| panic!(
+                    "Should exists an distace between {:?} and {:?}",
+                    coord, coord2
+                )),
+            10.0
+        );
+    }
+
+    #[test]
+    fn distance_not_direct_with_one_routes_is_10() {
+        let mut space = Space::new();
+
+        let coord = Coord(0, 0);
+        let coord1 = Coord(1, 0);
+        let coord2 = Coord(2, 0);
+
+        let star = Star::new("Star", coord.0, coord.1);
+        let star1 = Star::new("Star", coord1.0, coord1.1);
+        let star2 = Star::new("Star", coord2.0, coord2.1);
+
+        assert!(space.add_star(star).is_ok());
+        assert!(space.add_star(star1).is_ok());
+        assert!(space.add_star(star2).is_ok());
+
+        assert!(space
+            .create_link(coord.clone(), coord1.clone(), 5.0)
+            .is_ok());
+        assert!(space
+            .create_link(coord1.clone(), coord2.clone(), 5.0)
+            .is_ok());
+
+        assert_eq!(
+            space
+                .distance(coord.clone(), coord2.clone())
+                .unwrap_or_else(|_| panic!(
+                    "Should exists an distace between {:?} and {:?}",
+                    coord, coord2
+                )),
             10.0
         );
     }
