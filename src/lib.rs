@@ -1,7 +1,7 @@
 use std::{cell::RefCell, collections::HashMap, rc::Rc};
 
 #[derive(Clone, PartialEq, Eq, Hash, Debug)]
-struct Coord(usize, usize);
+pub struct Coord(usize, usize);
 
 #[derive(Clone)]
 struct Link {
@@ -15,14 +15,14 @@ impl Link {
     }
 }
 
-struct Star {
-    name: String,
-    coord: Coord,
+pub struct Star {
+    pub name: String,
+    pub coord: Coord,
     neighbors: Vec<Link>,
 }
 
 impl Star {
-    fn new(name: &str, x: usize, y: usize) -> Star {
+    pub fn new(name: &str, x: usize, y: usize) -> Star {
         Star {
             name: name.to_string(),
             coord: Coord(x, y),
@@ -33,18 +33,18 @@ impl Star {
 
 type StarRef = Rc<RefCell<Star>>;
 
-struct Space {
+pub struct Space {
     stars: HashMap<Coord, StarRef>,
 }
 
 impl Space {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self {
             stars: HashMap::new(),
         }
     }
 
-    fn add_star(&mut self, star: Star) -> Result<(), ()> {
+    pub fn add_star(&mut self, star: Star) -> Result<(), ()> {
         if !self.stars.contains_key(&star.coord.clone()) {
             self.stars
                 .insert(star.coord.clone(), Rc::new(RefCell::new(star)));
@@ -54,7 +54,7 @@ impl Space {
         }
     }
 
-    fn create_link(&mut self, start: Coord, end: Coord, distance: f32) -> Result<(), ()> {
+    pub fn create_link(&mut self, start: Coord, end: Coord, distance: f32) -> Result<(), ()> {
         let start = self.stars.get(&start);
         let end = self.stars.get(&end);
 
@@ -68,7 +68,7 @@ impl Space {
         }
     }
 
-    fn distance(&mut self, start: Coord, end: Coord) -> Result<f32, ()> {
+    pub fn distance(&mut self, start: Coord, end: Coord) -> Result<f32, ()> {
         let start = self.stars.get(&start);
         let end = self.stars.get(&end);
 
@@ -261,15 +261,12 @@ mod tests {
         assert!(space
             .create_link(coord.clone(), coord1.clone(), 5.0)
             .is_ok());
-
         assert!(space
             .create_link(coord.clone(), coord3.clone(), 10.0)
             .is_ok());
-
         assert!(space
             .create_link(coord1.clone(), coord2.clone(), 5.0)
             .is_ok());
-
         assert!(space
             .create_link(coord3.clone(), coord2.clone(), 5.0)
             .is_ok());
